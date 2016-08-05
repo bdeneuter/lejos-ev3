@@ -1,0 +1,65 @@
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name "LeJOS EV3 API"
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'leJOS (pronounced like the Spanish word "lejos" for "far") is a tiny Java Virtual Machine. In 2013 it was ported to the LEGO EV3 brick.'
+                url 'https://github.com/bdeneuter/lejos-ev3'
+
+                scm {
+                    connection 'scm:git:https://github.com/bdeneuter/lejos-ev3.git'
+                    developerConnection 'scm:git:https://github.com/bdeneuter/lejos-ev3.git'
+                    url 'https://github.com/bdeneuter/lejos-ev3.git'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU GENERAL PUBLIC LICENSE Version 3'
+                        url 'https://www.gnu.org/licenses/gpl-3.0.en.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'bart'
+                        name 'Bart De Neuter'
+                        email 'bdeneuter@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply from: "$rootProject.projectDir/gradle/scripts/publish.gradle"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.github.bdeneuter:dbus-java:2.7'
+    compile 'net.java.dev.jna:jna:3.2.7'
+}
